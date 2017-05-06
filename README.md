@@ -9,7 +9,7 @@ Productions:
     start → coma
     coma → expression ( , expression )*
     expression → bucle/ conditional / funcion / comparation
-    funcion → FUNCTION_ARROW LEFTPAR argumentos RIGHTPAR LEFTBRACE coma RIGHTBRACE
+    funcion → ID ASSIGN FUNCTION_ARROW LEFTPAR argumentos RIGHTPAR LEFTBRACE coma RIGHTBRACE
     comparation → (assign / additive) (COMPARATOR (assign / additive))+ / (assign / additive)
     conditional → IF expression THEN expression ELSE expression
     argumentos → (ID (COMA ID)*)?
