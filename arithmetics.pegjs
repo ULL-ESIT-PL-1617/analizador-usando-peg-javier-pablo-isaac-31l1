@@ -4,6 +4,25 @@
 */
 {
   var tabla_constantes = [];
+  function op_recursive(left, operator, rest) {
+          console.log("REST :", rest.length , " array: ", rest)
+     var resultado = {}
+      var next_left = rest[0][1];
+      if (rest.length > 1) {
+      resultado =  {
+            type : operator,
+            izq: left,
+            derecha: op_recursive(next_left, operator, rest.shift())
+      }
+    }else {
+      resultado =  {
+            type : operator,
+            izq: left,
+           derecha: next_left
+       }
+      }
+      return resultado;
+    }
 
 }
 
