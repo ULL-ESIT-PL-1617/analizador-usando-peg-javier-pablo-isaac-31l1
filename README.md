@@ -27,9 +27,7 @@ Productions:
 
     multiplicative → primary (MULOP primary)* / primary
 
-    bucle → WHILE comparation LEFTBRACE coma RIGHTBRACE /
-    FOR LEFTPAR assign ';' comparation ';' ID (INCREMENT/DECREMENT) RIGHTPAR
-   LEFTBRACE act:coma COMA RIGHTBRACE
+    bucle → WHILE comparation LEFTBRACE coma RIGHTBRACE / FOR LEFTPAR assign ';' comparation ';' ID (INCREMENT/DECREMENT) RIGHTPAR LEFTBRACE act:coma COMA RIGHTBRACE
 
     primary → llamada_funcion | BOOLEAN | integer | identifier | LEFTPAR coma RIGHTPAR
 
