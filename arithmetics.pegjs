@@ -3,72 +3,8 @@
  * "2*(3+4)". The parser generated from this grammar then computes their value.
  */
 {
-  var Parser = this;
-  var util = require('util');
   var tabla_constantes = [];
-  Parser.symbolTable = Parser.symbolTable || {
-     PI: Math.PI,
-   }
 
-  function checkId(id) {
-    if (id == "true" || id == "false") {
-        return false;
-    }
-    return true;
-  }
-
-  function op_recursive(left, operator, rest) {
-    var resultado = {}
-    var next_left = rest[0][1];
-    if (rest.length > 1) {
-    resultado =  {
-          type : operator,
-          izq: left,
-          derecha: op_recursive(next_left, operator, rest.shift())
-    }
-  }else {
-    resultado =  {
-          type : operator,
-          izq: left,
-          derecha: next_left
-     }
-    }
-    return resultado;
-  }
-
-  function evaluar(input) {
-    let resultado = {};
-    resultado = Parser.parse(input);
-    return resultado.result;
-  }
-
-  function comparar(left, right) {
-     var inicial = left;
-      for(var i = 0; i < right.length;i++) {
-        var t = right[i];
-        var comp = t[0];
-        var derecha = t[1];
-        var comprobacion;
-        switch(comp) {
-          case '<' : comprobacion = left < derecha
-                     break;
-          case '<=' : comprobacion = left <= derecha
-                      break;
-          case '>' : comprobacion = left > derecha
-                     break;
-          case '>=' : comprobacion = left >= derecha
-                    break;
-          case '==' : comprobacion = left == derecha
-                    break;
-
-          default : console.log("Error! "+ comp);
-        }
-        if (!comprobacion)
-          return false;
-        else left = derecha;
-      }
-      return true;
-    }
   }
 
 start
