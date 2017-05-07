@@ -2568,10 +2568,11 @@ function peg$parse(input, options) {
        var resultado = {}
         var next_left = rest[0][1];
         if (rest.length > 1) {
+          rest.shift()
         resultado =  {
               type : operator,
               izq: left,
-              derecha: op_recursive(next_left, operator, rest.shift())
+              derecha: op_recursive(next_left, operator, rest)
         }
       }else {
         resultado =  {
