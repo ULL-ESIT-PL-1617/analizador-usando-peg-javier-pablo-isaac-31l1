@@ -1,171 +1,171 @@
 /*
- * Classic example grammar, which recognizes simple arithmetic expressions like
- * "2*(3+4)". The parser generated from this grammar then computes their value.
- */
+* Classic example grammar, which recognizes simple arithmetic expressions like
+* "2*(3+4)". The parser generated from this grammar then computes their value.
+*/
 {
   var tabla_constantes = [];
 
-  }
+}
 
 start
-  = a:coma {
-                return a;
-             }
+= a:coma {
+  return a;
+}
 
 coma
-  = a:expression b:(COMA expression)* {
-                                  var resultado = [];
-                                   resultado.push(a);
-                                   for (var i = 0; i < b.length; i++) {
-                                     resultado.push(b[i][1]);
-                                   }
-                                   return resultado;
+= a:expression b:(COMA expression)* {
+  var resultado = [];
+  resultado.push(a);
+  for (var i = 0; i < b.length; i++) {
+    resultado.push(b[i][1]);
+  }
+  return resultado;
 
-                             }
+}
 expression
-  = exp:(bucle / conditional / funcion / comparation) {return exp;}
+= exp:(bucle / conditional / funcion / comparation) {return exp;}
 
 
 funcion
-  = id:identifier ASSIGN FUNCTION_ARROW LEFTPAR args:(argumentos)? RIGHTPAR LEFTBRACE codigo:(coma)? ret:(RETURN expression)?
-  COMA? RIGHTBRACE {
-                                                                                                    var result = {};
-                                                                                                    var arg = []
-                                                                                                    if(!codigo) {
-                                                                                                      codigo = [];
-                                                                                                    }
-                                                                                                    if (args && args.length > 0) {
-                                                                                                    arg.push(args[0]);
-                                                                                                    for (var i = 0; i < args[1].length; i++)
-                                                                                                        arg.push(args[1][i][1]);
-                                                                                                      }
-                                                                                                    result = {
-                                                                                                            nombre_funcion : id,
-                                                                                                            arguments : arg,
-                                                                                                            code : codigo
-                                                                                                      }
-                                                                                                      if(ret)
-                                                                                                        result["return"] = ret[1];
-                                                                                                     return result;
-                                                                                                  }
+= id:identifier ASSIGN FUNCTION_ARROW LEFTPAR args:(argumentos)? RIGHTPAR LEFTBRACE codigo:(coma)? ret:(RETURN expression)?
+COMA? RIGHTBRACE {
+  var result = {};
+  var arg = []
+  if(!codigo) {
+    codigo = [];
+  }
+  if (args && args.length > 0) {
+    arg.push(args[0]);
+    for (var i = 0; i < args[1].length; i++)
+    arg.push(args[1][i][1]);
+  }
+  result = {
+    nombre_funcion : id,
+    arguments : arg,
+    code : codigo
+  }
+  if(ret)
+  result["return"] = ret[1];
+  return result;
+}
 comparation
-    = left:(assign / additive) right:(COMPARATOR (assign / additive))+ {
-                                                                          var resultado = op_recursive(left, right[0][0], right);
-                                                                          return resultado;
-                                                                        }
-     / b:(assign / additive) {return b;}
+= left:(assign / additive) right:(COMPARATOR (assign / additive))+ {
+  var resultado = op_recursive(left, right[0][0], right);
+  return resultado;
+}
+/ b:(assign / additive) {return b;}
 
 
 bucle
- = WHILE cond:comparation  LEFTBRACE act:coma COMA RIGHTBRACE {
-                                                            var resultado = {
-                                                              type: "WHILE",
-                                                              condition: cond,
-                                                              actions : act
-                                                            };
-                                                            return resultado;
-                                                          }
+= WHILE cond:comparation  LEFTBRACE act:coma COMA RIGHTBRACE {
+  var resultado = {
+    type: "WHILE",
+    condition: cond,
+    actions : act
+  };
+  return resultado;
+}
 /  FOR LEFTPAR ini:assign COMA cond:comparation COMA ident:ID i:(INCREMENT/DECREMENT) RIGHTPAR
- LEFTBRACE act:coma COMA RIGHTBRACE {
-                                                                      var incremento;
-                                                                      if (i == "++") {
-                                                                        incremento = 1;
-                                                                      } else {
-                                                                        incremento = -1;
-                                                                      }
-                                                                      var resultado = {
-                                                                        type: "FOR",
-                                                                        initial: ini,
-                                                                        condition : cond,
-                                                                        increment: {
-                                                                          id : ident,
-                                                                          quantity: incremento
-                                                                        },
-                                                                        actions: act
-                                                                      };
-                                                                      return resultado;
-                                                                    }
+LEFTBRACE act:coma COMA RIGHTBRACE {
+  var incremento;
+  if (i == "++") {
+    incremento = 1;
+  } else {
+    incremento = -1;
+  }
+  var resultado = {
+    type: "FOR",
+    initial: ini,
+    condition : cond,
+    increment: {
+      id : ident,
+      quantity: incremento
+    },
+    actions: act
+  };
+  return resultado;
+}
 
 
 
 conditional
-  = IF cond:comparation THEN a:expression ELSE b:expression  {
-                                                            var resultado = {
-                                                                  type: "IF",
-                                                                  condition: cond,
-                                                                  type2: "THEN",
-                                                                  first: a,
-                                                                  type3:  "ELSE",
-                                                                  second: b,
-                                                        };
-                                                        return resultado;
-                                                    }
+= IF cond:comparation THEN a:expression ELSE b:expression  {
+  var resultado = {
+    type: "IF",
+    condition: cond,
+    type2: "THEN",
+    first: a,
+    type3:  "ELSE",
+    second: b,
+  };
+  return resultado;
+}
 argumentos
-  = a:(identifier (COMA identifier)*)?
+= a:(identifier (COMA identifier)*)?
 
 
 
 assign
-  = i:identifier ASSIGN a:expression {
-          var resultado = {
-                type: "=",
-                id: i,
-                value: a
-      };
-      return resultado;
-      }
-  / a:additive {return a;}
+= i:identifier ASSIGN a:expression {
+  var resultado = {
+    type: "=",
+    id: i,
+    value: a
+  };
+  return resultado;
+}
+/ a:additive {return a;}
 
 additive
-  = left:multiplicative rest:(ADDOP multiplicative)+ {
-      var resultado = op_recursive(left, rest[0][0], rest);
-      return resultado;
-    }
-  / m:multiplicative { return m;}
+= left:multiplicative rest:(ADDOP multiplicative)+ {
+  var resultado = op_recursive(left, rest[0][0], rest);
+  return resultado;
+}
+/ m:multiplicative { return m;}
 
 multiplicative
-  = left:primary rest:(MULOP primary)+ {
-     var resultado = op_recursive(left, rest[0][0], rest);
-    return resultado;
-    }
-  / p:primary &{if (p.value == "return") return false; else return true;} {return p;}
+= left:primary rest:(MULOP primary)+ {
+  var resultado = op_recursive(left, rest[0][0], rest);
+  return resultado;
+}
+/ p:primary &{if (p.value == "return") return false; else return true;} {return p;}
 
 primary
-  = llamada_funcion
-  /boolean:BOOLEAN { return { type: "BOOLEAN", value:boolean } }
-  /  integer
-  / identifier
-  / LEFTPAR com:coma RIGHTPAR { return com; }
+= llamada_funcion
+/boolean:BOOLEAN { return { type: "BOOLEAN", value:boolean } }
+/  integer
+/ identifier
+/ LEFTPAR com:coma RIGHTPAR { return com; }
 
 
 
 identifier
- = CONST cid:ID { tabla_constantes.push(cid); return { type: "ID", value:cid, constante: "si" } }
- / id:ID {
-    if(tabla_constantes.indexOf(id) > -1)
-      return { type: "ID", value:id, constante: "si" }
-    else   return { type: "ID", value:id, constante: "no" }
-  }
+= CONST cid:ID { tabla_constantes.push(cid); return { type: "ID", value:cid, constante: "si" } }
+/ id:ID {
+  if(tabla_constantes.indexOf(id) > -1)
+  return { type: "ID", value:id, constante: "si" }
+  else   return { type: "ID", value:id, constante: "no" }
+}
 
 
 llamada_funcion
-    = id:ID LEFTPAR args:(primary (COMMA primary)*)? RIGHTPAR {
+= id:ID LEFTPAR args:(primary (COMMA primary)*)? RIGHTPAR {
 
-                                                        var result = {};
-                                                        var arg = []
-                                                        arg.push(args[0]);
-                                                        for (var i = 0; i < args[1].length; i++)
-                                                            arg.push(args[1][i][1]);
-                                                        var resultado = {
-                                                                  type : "FUNCTION_CALL",
-                                                                  value: id,
-                                                                  args : arg
-                                                                        }
-                                                        return resultado;
-                                                      }
+  var result = {};
+  var arg = []
+  arg.push(args[0]);
+  for (var i = 0; i < args[1].length; i++)
+  arg.push(args[1][i][1]);
+  var resultado = {
+    type : "FUNCTION_CALL",
+    value: id,
+    args : arg
+  }
+  return resultado;
+}
 
 integer "integer"
-  = n:NUMBER { return { type: "NUMBER", value:n } }
+= n:NUMBER { return { type: "NUMBER", value:n } }
 
 _ = $[ \t\n\r]*
 
