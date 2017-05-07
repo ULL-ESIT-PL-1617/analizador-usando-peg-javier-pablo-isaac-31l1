@@ -5,6 +5,7 @@
 {
   var Parser = this;
   var util = require('util');
+  var tabla_constantes = [];
   Parser.symbolTable = Parser.symbolTable || {
      PI: Math.PI,
    }
@@ -90,19 +91,26 @@ expression
 
 
 funcion
-  = id:ID ASSIGN FUNCTION_ARROW LEFTPAR args:argumentos RIGHTPAR LEFTBRACE codigo:coma RIGHTBRACE {
+  = id:identifier ASSIGN FUNCTION_ARROW LEFTPAR args:(argumentos)? RIGHTPAR LEFTBRACE codigo:(coma)? ret:(RETURN expression)?
+  COMA? RIGHTBRACE {
                                                                                                     var result = {};
                                                                                                     var arg = []
+                                                                                                    if(!codigo) {
+                                                                                                      codigo = [];
+                                                                                                    }
+                                                                                                    if (args && args.length > 0) {
                                                                                                     arg.push(args[0]);
                                                                                                     for (var i = 0; i < args[1].length; i++)
                                                                                                         arg.push(args[1][i][1]);
+                                                                                                      }
                                                                                                     result = {
                                                                                                             nombre_funcion : id,
                                                                                                             arguments : arg,
-                                                                                                            code : codigo,
-                                                                                                            tabla_simbolos : {}
+                                                                                                            code : codigo
                                                                                                       }
-                                                                                                    return result;
+                                                                                                      if(ret)
+                                                                                                        result["return"] = ret[1];
+                                                                                                     return result;
                                                                                                   }
 comparation
     = left:(assign / additive) right:(COMPARATOR (assign / additive))+ {
@@ -113,13 +121,35 @@ comparation
 
 
 bucle
- = WHILE condition:comparation  LEFTBRACE act:coma RIGHTBRACE {
+ = WHILE cond:comparation  LEFTBRACE act:coma COMA RIGHTBRACE {
                                                             var resultado = {
                                                               type: "WHILE",
+                                                              condition: cond,
                                                               actions : act
                                                             };
                                                             return resultado;
                                                           }
+/  FOR LEFTPAR ini:assign COMA cond:comparation COMA ident:ID i:(INCREMENT/DECREMENT) RIGHTPAR
+ LEFTBRACE act:coma COMA RIGHTBRACE {
+                                                                      var incremento;
+                                                                      if (i == "++") {
+                                                                        incremento = 1;
+                                                                      } else {
+                                                                        incremento = -1;
+                                                                      }
+                                                                      var resultado = {
+                                                                        type: "FOR",
+                                                                        initial: ini,
+                                                                        condition : cond,
+                                                                        increment: {
+                                                                          id : ident,
+                                                                          quantity: incremento
+                                                                        },
+                                                                        actions: act
+                                                                      };
+                                                                      return resultado;
+                                                                    }
+
 
 
 conditional
@@ -135,12 +165,12 @@ conditional
                                                         return resultado;
                                                     }
 argumentos
-  = a:(ID (COMA ID)*)?
+  = a:(identifier (COMA identifier)*)?
 
 
 
 assign
-  = i:ID ASSIGN a:expression {
+  = i:identifier ASSIGN a:expression {
           var resultado = {
                 type: "=",
                 id: i,
@@ -162,18 +192,28 @@ multiplicative
      var resultado = op_recursive(left, rest[0][0], rest);
     return resultado;
     }
-  / p:primary {return p;}
+  / p:primary &{if (p.value == "return") return false; else return true;} {return p;}
 
 primary
   = llamada_funcion
   /boolean:BOOLEAN { return { type: "BOOLEAN", value:boolean } }
   /  integer
-  / id:ID { return { type: "ID", value:id } }
+  / identifier
   / LEFTPAR com:coma RIGHTPAR { return com; }
 
 
+
+identifier
+ = CONST cid:ID { tabla_constantes.push(cid); return { type: "ID", value:cid, constante: "si" } }
+ / id:ID {
+    if(tabla_constantes.indexOf(id) > -1)
+      return { type: "ID", value:id, constante: "si" }
+    else   return { type: "ID", value:id, constante: "no" }
+  }
+
+
 llamada_funcion
-    = id:ID LEFTPAR args:(primary (COMA primary)*)? RIGHTPAR {
+    = id:ID LEFTPAR args:(primary (COMMA primary)*)? RIGHTPAR {
 
                                                         var result = {};
                                                         var arg = []
@@ -205,6 +245,9 @@ ELSE =  _"else"_  { return 'else'; }
 TRUE =  _"true"_  { return 'true'; }
 FALSE =  _"false"_  { return 'false'; }
 WHILE = _"while"_  { return 'while'; }
+FOR = _"for"_  { return 'for'; }
+INCREMENT = _"++"_  { return '++'; }
+DECREMENT = _"--"_  { return '--'; }
 LTHAN =  _"<"_  { return '<'; }
 LETHAN =  _"<="_  { return '<='; }
 GTHAN =  _">"_  { return '>'; }
@@ -215,11 +258,14 @@ MINUS = _"-"_ { return '-'; }
 MULT = _"*"_  { return '*'; }
 DIV = _"/"_   { return '/'; }
 FUNCTION_ARROW = _"->"_
+RETURN = _"return"_ { return 'return'; }
+CONST = _"const"_ { return 'const'; }
 LEFTBRACE = _"{"_
 RIGHTBRACE = _"}"_
 LEFTPAR = _"("_
 RIGHTPAR = _")"_
-COMA = _","_
+COMA = _";"_
+COMMA = _","_
 NUMBER = _ digits:$[0-9]+ _ { return parseInt(digits, 10); }
 ID = _ id:$([a-z_]i$([a-z0-9_]i*))_ {  return id; }
 ASSIGN = _ '=' _
