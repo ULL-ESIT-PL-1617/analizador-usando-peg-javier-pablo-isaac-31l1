@@ -1,0 +1,25 @@
+h = ->(a,b){
+	i=0;
+	h=0;
+	while(i < 6){
+		h = a + 2;
+		i = i +1
+	};
+};
+
+f(1,2,4)
+
+funcition = ->(a,b,c){
+while (j == 4){
+  if (z < 89){
+	  a = 9 * 90 /10;
+    b = a + 16;
+		h(a,b);
+  }
+	else{
+	  j = 89 * 2;
+	}
+}
+};
+
+function(a,b,c);
