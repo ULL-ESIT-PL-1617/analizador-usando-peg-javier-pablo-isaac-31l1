@@ -32,7 +32,7 @@ start
 }
 
 coma
-= a:expression b:(COMA expression)* {
+= a:expression b:(PUNTCOMA expression)* {
   var resultado = [];
   resultado.push(a);
   for (var i = 0; i < b.length; i++) {
@@ -47,7 +47,7 @@ expression
 
 funcion
 = id:identifier ASSIGN FUNCTION_ARROW LEFTPAR args:(argumentos)? RIGHTPAR LEFTBRACE codigo:(coma)? ret:(RETURN expression)?
-COMA? RIGHTBRACE {
+PUNTCOMA? RIGHTBRACE {
   var result = {};
   var arg = []
   if(!codigo) {
@@ -76,7 +76,7 @@ comparation
 
 
 bucle
-= WHILE cond:comparation  LEFTBRACE act:coma COMA RIGHTBRACE {
+= WHILE cond:comparation  LEFTBRACE act:coma PUNTCOMA RIGHTBRACE {
   var resultado = {
     type: "WHILE",
     condition: cond,
@@ -84,8 +84,8 @@ bucle
   };
   return resultado;
 }
-/  FOR LEFTPAR ini:assign COMA cond:comparation COMA ident:ID i:(INCREMENT/DECREMENT) RIGHTPAR
-LEFTBRACE act:coma COMA RIGHTBRACE {
+/  FOR LEFTPAR ini:assign PUNTCOMA cond:comparation PUNTCOMA ident:ID i:(INCREMENT/DECREMENT) RIGHTPAR
+LEFTBRACE act:coma PUNTCOMA RIGHTBRACE {
   var incremento;
   if (i == "++") {
     incremento = 1;
@@ -120,7 +120,7 @@ conditional
   return resultado;
 }
 argumentos
-= a:(identifier (COMA identifier)*)?
+= a:(identifier (PUNTCOMA identifier)*)?
 
 
 
@@ -219,7 +219,7 @@ LEFTBRACE = _"{"_
 RIGHTBRACE = _"}"_
 LEFTPAR = _"("_
 RIGHTPAR = _")"_
-COMA = _";"_
+PUNTCOMA = _";"_
 COMMA = _","_
 NUMBER = _ digits:$[0-9]+ _ { return parseInt(digits, 10); }
 ID = _ id:$([a-z_]i$([a-z0-9_]i*))_ {  return id; }
