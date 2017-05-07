@@ -2,4 +2,4 @@ var PEG = require("./arithmetics.js");
 var input = process.argv[2] || "a < 5";
 console.log(`Processing <${input}>`);
 var r = PEG.parse(input);
-console.log(r);
+console.log(JSON.stringify(r, null, 2));

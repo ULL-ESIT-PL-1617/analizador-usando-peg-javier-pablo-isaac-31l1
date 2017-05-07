@@ -1,5 +1,17 @@
+# Información
 
-### Gramática
+## Miembros:
+* [Pablo Pastor Martín](https://alu0100890839.github.io)
+* [Isaac Aimán Salas](https://alu0100841565.github.io)
+* [Javier Rámos Fernández](https://alu0100884982.github.io)
+
+## Uso
+Para ejecutar los test: `mocha`
+
+Para ejecutar: `node mainfromfile.js [archivo]` ó `node mainfromfile.js [codigo]`
+
+## Gramática
+
 Σ = { ADDOP, MULOP, COMPARATOR, NUMBER, ID, WHILE, LEFTBRACE, RIGHTBRACE, LEFTPAR, RIGHTPAR, RETURN, IF, THEN, ELSE, TRUE, FALSE, COMA, ASSIGN, INCREMENT, DECREMENT, FOR ';' }
 
 V = { start, expression, funcion, bucle, argumentos, coma , assign, conditional, comparation, additive, multiplicative, primary, llamada_funcion, integer}
