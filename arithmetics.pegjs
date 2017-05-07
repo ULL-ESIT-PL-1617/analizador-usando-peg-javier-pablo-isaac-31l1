@@ -2,6 +2,7 @@
 * Classic example grammar, which recognizes simple arithmetic expressions like
 * "2*(3+4)". The parser generated from this grammar then computes their value.
 */
+
 {
   var tabla_constantes = [];
   function op_recursive(left, operator, rest) {
@@ -40,15 +41,13 @@ coma
     resultado.push(b[i][1]);
   }
   return resultado;
-
 }
+
 expression
 = exp:(bucle / conditional / funcion / comparation) {return exp;}
 
-
 funcion
-= id:identifier ASSIGN FUNCTION_ARROW LEFTPAR args:(argumentos)? RIGHTPAR LEFTBRACE codigo:(coma)? ret:(RETURN expression)?
-PUNTCOMA? RIGHTBRACE {
+= id:identifier ASSIGN FUNCTION_ARROW LEFTPAR args:(argumentos)? RIGHTPAR LEFTBRACE codigo:(coma)? ret:(RETURN expression)? PUNTCOMA? RIGHTBRACE {
   var result = {};
   var arg = []
   if(!codigo) {
@@ -68,6 +67,7 @@ PUNTCOMA? RIGHTBRACE {
   result["return"] = ret[1];
   return result;
 }
+
 comparation
 = left:(assign / additive) right:(COMPARATOR (assign / additive))+ {
   var resultado = op_recursive(left, right[0][0], right);
@@ -107,7 +107,6 @@ LEFTBRACE act:coma PUNTCOMA RIGHTBRACE {
 }
 
 
-
 conditional
 = IF cond:comparation THEN a:expression ELSE b:expression  {
   var resultado = {
@@ -120,9 +119,10 @@ conditional
   };
   return resultado;
 }
+
+
 argumentos
 = a:(identifier (PUNTCOMA identifier)*)?
-
 
 
 assign
@@ -136,12 +136,14 @@ assign
 }
 / a:additive {return a;}
 
+
 additive
 = left:multiplicative rest:(ADDOP multiplicative)+ {
   var resultado = op_recursive(left, rest[0][0], rest);
   return resultado;
 }
 / m:multiplicative { return m;}
+
 
 multiplicative
 = left:primary rest:(MULOP primary)+ {
@@ -150,13 +152,13 @@ multiplicative
 }
 / p:primary &{if (p.value == "return") return false; else return true;} {return p;}
 
+
 primary
 = llamada_funcion
 /boolean:BOOLEAN { return { type: "BOOLEAN", value:boolean } }
 /  integer
 / identifier
 / LEFTPAR com:coma RIGHTPAR { return com; }
-
 
 
 identifier
@@ -170,7 +172,6 @@ identifier
 
 llamada_funcion
 = id:ID LEFTPAR args:(primary (COMMA primary)*)? RIGHTPAR {
-
   var result = {};
   var arg = []
   arg.push(args[0]);
@@ -183,6 +184,7 @@ llamada_funcion
   }
   return resultado;
 }
+
 
 integer "integer"
 = n:NUMBER { return { type: "NUMBER", value:n } }
