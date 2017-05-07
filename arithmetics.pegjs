@@ -107,15 +107,16 @@ LEFTBRACE act:coma PUNTCOMA RIGHTBRACE {
 
 
 conditional
-= IF cond:comparation THEN a:expression ELSE b:expression  {
+= IF LEFTPAR cond:comparation RIGHTPAR LEFTBRACE a:coma? RIGHTBRACE c:(ELSE LEFTBRACE b:coma? RIGHTBRACE)?{
   var resultado = {
     type: "IF",
     condition: cond,
-    type2: "THEN",
-    first: a,
-    type3:  "ELSE",
-    second: b,
+    first: a
   };
+  if (c != null){
+    resultado.second = c[2]
+    resultado.type = "IF-ELSE"
+  }
   return resultado;
 }
 
