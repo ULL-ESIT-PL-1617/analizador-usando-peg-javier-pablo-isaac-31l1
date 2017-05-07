@@ -151,7 +151,6 @@ function peg$parse(input, options) {
           resultado.push(b[i][1]);
         }
         return resultado;
-
       },
       peg$c2 = function(exp) {return exp;},
       peg$c3 = function(id, args, codigo, ret) {
@@ -242,7 +241,6 @@ function peg$parse(input, options) {
         else   return { type: "ID", value:id, constante: "no" }
       },
       peg$c19 = function(id, args) {
-
         var result = {};
         var arg = []
         arg.push(args[0]);
@@ -502,7 +500,10 @@ function peg$parse(input, options) {
     if (s1 !== peg$FAILED) {
       s2 = [];
       s3 = peg$currPos;
-      s4 = peg$parseCOMA();
+      s4 = peg$parsePUNTCOMA();
+      if (s4 === peg$FAILED) {
+        s4 = null;
+      }
       if (s4 !== peg$FAILED) {
         s5 = peg$parseexpression();
         if (s5 !== peg$FAILED) {
@@ -519,7 +520,10 @@ function peg$parse(input, options) {
       while (s3 !== peg$FAILED) {
         s2.push(s3);
         s3 = peg$currPos;
-        s4 = peg$parseCOMA();
+        s4 = peg$parsePUNTCOMA();
+        if (s4 === peg$FAILED) {
+          s4 = null;
+        }
         if (s4 !== peg$FAILED) {
           s5 = peg$parseexpression();
           if (s5 !== peg$FAILED) {
@@ -551,7 +555,7 @@ function peg$parse(input, options) {
   }
 
   function peg$parseexpression() {
-    var s0, s1;
+    var s0, s1, s2;
 
     s0 = peg$currPos;
     s1 = peg$parsebucle();
@@ -565,10 +569,22 @@ function peg$parse(input, options) {
       }
     }
     if (s1 !== peg$FAILED) {
-      peg$savedPos = s0;
-      s1 = peg$c2(s1);
+      s2 = peg$parsePUNTCOMA();
+      if (s2 === peg$FAILED) {
+        s2 = null;
+      }
+      if (s2 !== peg$FAILED) {
+        peg$savedPos = s0;
+        s1 = peg$c2(s1);
+        s0 = s1;
+      } else {
+        peg$currPos = s0;
+        s0 = peg$FAILED;
+      }
+    } else {
+      peg$currPos = s0;
+      s0 = peg$FAILED;
     }
-    s0 = s1;
 
     return s0;
   }
@@ -618,7 +634,7 @@ function peg$parse(input, options) {
                       s9 = null;
                     }
                     if (s9 !== peg$FAILED) {
-                      s10 = peg$parseCOMA();
+                      s10 = peg$parsePUNTCOMA();
                       if (s10 === peg$FAILED) {
                         s10 = null;
                       }
@@ -763,19 +779,28 @@ function peg$parse(input, options) {
     s0 = peg$currPos;
     s1 = peg$parseWHILE();
     if (s1 !== peg$FAILED) {
-      s2 = peg$parsecomparation();
+      s2 = peg$parseLEFTPAR();
       if (s2 !== peg$FAILED) {
-        s3 = peg$parseLEFTBRACE();
+        s3 = peg$parsecomparation();
         if (s3 !== peg$FAILED) {
-          s4 = peg$parsecoma();
+          s4 = peg$parseRIGHTPAR();
           if (s4 !== peg$FAILED) {
-            s5 = peg$parseCOMA();
+            s5 = peg$parseLEFTBRACE();
             if (s5 !== peg$FAILED) {
-              s6 = peg$parseRIGHTBRACE();
+              s6 = peg$parsecoma();
+              if (s6 === peg$FAILED) {
+                s6 = null;
+              }
               if (s6 !== peg$FAILED) {
-                peg$savedPos = s0;
-                s1 = peg$c6(s2, s4);
-                s0 = s1;
+                s7 = peg$parseRIGHTBRACE();
+                if (s7 !== peg$FAILED) {
+                  peg$savedPos = s0;
+                  s1 = peg$c6(s3, s6);
+                  s0 = s1;
+                } else {
+                  peg$currPos = s0;
+                  s0 = peg$FAILED;
+                }
               } else {
                 peg$currPos = s0;
                 s0 = peg$FAILED;
@@ -808,11 +833,11 @@ function peg$parse(input, options) {
         if (s2 !== peg$FAILED) {
           s3 = peg$parseassign();
           if (s3 !== peg$FAILED) {
-            s4 = peg$parseCOMA();
+            s4 = peg$parsePUNTCOMA();
             if (s4 !== peg$FAILED) {
               s5 = peg$parsecomparation();
               if (s5 !== peg$FAILED) {
-                s6 = peg$parseCOMA();
+                s6 = peg$parsePUNTCOMA();
                 if (s6 !== peg$FAILED) {
                   s7 = peg$parseID();
                   if (s7 !== peg$FAILED) {
@@ -827,7 +852,7 @@ function peg$parse(input, options) {
                         if (s10 !== peg$FAILED) {
                           s11 = peg$parsecoma();
                           if (s11 !== peg$FAILED) {
-                            s12 = peg$parseCOMA();
+                            s12 = peg$parsePUNTCOMA();
                             if (s12 !== peg$FAILED) {
                               s13 = peg$parseRIGHTBRACE();
                               if (s13 !== peg$FAILED) {
@@ -946,7 +971,7 @@ function peg$parse(input, options) {
     if (s1 !== peg$FAILED) {
       s2 = [];
       s3 = peg$currPos;
-      s4 = peg$parseCOMA();
+      s4 = peg$parseCOMMA();
       if (s4 !== peg$FAILED) {
         s5 = peg$parseidentifier();
         if (s5 !== peg$FAILED) {
@@ -963,7 +988,7 @@ function peg$parse(input, options) {
       while (s3 !== peg$FAILED) {
         s2.push(s3);
         s3 = peg$currPos;
-        s4 = peg$parseCOMA();
+        s4 = peg$parseCOMMA();
         if (s4 !== peg$FAILED) {
           s5 = peg$parseidentifier();
           if (s5 !== peg$FAILED) {
@@ -2325,7 +2350,7 @@ function peg$parse(input, options) {
     return s0;
   }
 
-  function peg$parseCOMA() {
+  function peg$parsePUNTCOMA() {
     var s0, s1, s2, s3;
 
     s0 = peg$currPos;
@@ -2564,7 +2589,6 @@ function peg$parse(input, options) {
 
     var tabla_constantes = [];
     function op_recursive(left, operator, rest) {
-            console.log("REST :", rest.length , " array: ", rest)
        var resultado = {}
         var next_left = rest[0][1];
         if (rest.length > 1) {

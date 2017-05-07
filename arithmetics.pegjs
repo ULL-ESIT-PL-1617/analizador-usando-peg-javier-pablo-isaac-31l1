@@ -6,7 +6,6 @@
 {
   var tabla_constantes = [];
   function op_recursive(left, operator, rest) {
-          console.log("REST :", rest.length , " array: ", rest)
      var resultado = {}
       var next_left = rest[0][1];
       if (rest.length > 1) {
@@ -34,7 +33,7 @@ start
 }
 
 coma
-= a:expression b:(PUNTCOMA expression)* {
+= a:expression b:(PUNTCOMA? expression)* {
   var resultado = [];
   resultado.push(a);
   for (var i = 0; i < b.length; i++) {
@@ -44,7 +43,7 @@ coma
 }
 
 expression
-= exp:(bucle / conditional / funcion / comparation) {return exp;}
+= exp:(bucle / conditional / funcion / comparation) PUNTCOMA? {return exp;}
 
 funcion
 = id:identifier ASSIGN FUNCTION_ARROW LEFTPAR args:(argumentos)? RIGHTPAR LEFTBRACE codigo:(coma)? ret:(RETURN expression)? PUNTCOMA? RIGHTBRACE {
@@ -77,7 +76,7 @@ comparation
 
 
 bucle
-= WHILE cond:comparation  LEFTBRACE act:coma PUNTCOMA RIGHTBRACE {
+= WHILE LEFTPAR cond:comparation RIGHTPAR LEFTBRACE act:coma? RIGHTBRACE {
   var resultado = {
     type: "WHILE",
     condition: cond,
@@ -122,7 +121,7 @@ conditional
 
 
 argumentos
-= a:(identifier (PUNTCOMA identifier)*)?
+= a:(identifier (COMMA identifier)*)?
 
 
 assign
